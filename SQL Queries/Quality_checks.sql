@@ -1,7 +1,17 @@
+/*
+
+*/
+
 USE retail_dwh;
 GO
 
--- Exact Duplicates Check in raw customers table
+-- Schema validation
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'customers' AND
+	  TABLE_SCHEMA = 'bronze'; 
+
+-- Exact Duplicates Check in raw customers table --> 218 Duplicates found in customers table
 SELECT COUNT(*) AS customers_dup_count
 FROM (
 	SELECT customer_id, name, city, updated_at, COUNT(*) AS Count
@@ -9,7 +19,6 @@ FROM (
 	GROUP BY customer_id, name, city, updated_at
 	HAVING COUNT(*) > 1
 ) t;
--- 218 Duplicates found in customers table
 
 
 -- Absolute duplicates in raw customers table
@@ -20,7 +29,7 @@ HAVING COUNT(*) > 1;
 -- Duplicates found in customer_id which may be updates in custumer details(SCD's)
 
 
--- Duplicates Check in raw orders table
+-- Duplicates Check in raw orders table --> No duplicates found in orders table
 SELECT COUNT(*) AS orders_dup_count
 FROM (
 	SELECT order_id, customer_id, product_id, order_date, quantity, amount, COUNT(*) AS count
@@ -28,7 +37,6 @@ FROM (
 	GROUP BY order_id, customer_id, product_id, order_date, quantity, amount
 	HAVING COUNT(*) > 1
 ) t1;
--- No duplicates found in orders table
 
 
 -- Duplicates Check in raw products table
